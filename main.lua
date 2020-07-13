@@ -1,25 +1,42 @@
 --[[
 From this tutorial:
-https://www.youtube.com/watch?v=ssEfJ54Lj3M&list=PLM5EvDHhpyTcThnWfeP1459KelemQOBdG&index=2
+https://sheepolution.com/learn/book/5
 --]]
 
-function love.load ()
-  x = 0
-  speed = 200
+function love.load()
+  x = 100
+  y = 50
+  distance = 200
+  up = (-1)
+  down = 1
+  right = 1
+  left = (-1)
+  stopped = 0
+  y_direction = stopped
+  x_direction = stopped
 end
 
 function love.update(dt)
-  x = x + speed * dt
-  if x > 800 then
-    x = 800
-    speed = (- speed)
+  if love.keyboard.isDown("right") and not love.keyboard.isDown("left") then
+    x_direction = right
+  elseif love.keyboard.isDown("left") and not love.keyboard.isDown("right") then
+    x_direction = left
+  else
+    x_direction = stopped
   end
-  if x < 0 then
-    x = 0
-    speed = (- speed)
+
+  if love.keyboard.isDown("up") and not love.keyboard.isDown("down") then
+    y_direction = up
+  elseif love.keyboard.isDown("down") and not love.keyboard.isDown("up") then
+    y_direction = down
+  else
+    y_direction = stopped
   end
+  
+  x = x + (distance * x_direction * dt)
+  y = y + (distance * y_direction * dt)
 end
 
 function love.draw()
-  love.graphics.circle("fill", x, 200, 50, 50)
+  love.graphics.rectangle("line", x, y, 200, 150)
 end
