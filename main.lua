@@ -14,20 +14,40 @@ function love.load()
   stopped = 0
   y_direction = stopped
   x_direction = stopped
+
+  count = 0
+  total_dt = 0
+end
+
+local function x_direction ()
+  local go_right = love.keyboard.isDown("right")
+  local go_left  = love.keyboard.isDown("left")
+  return (go_left and left or stopped) + (go_right and right or stopped)
+end
+
+local function y_direction ()
+  local go_up   = love.keyboard.isDown("up")
+  local go_down = love.keyboard.isDown("down")
+  return (go_up and up or stopped) + (go_down and down or stopped)
 end
 
 function love.update(dt)
-  if love.keyboard.isDown("right") and not love.keyboard.isDown("left") then
+  local go_right = love.keyboard.isDown("right")
+  local go_left  = love.keyboard.isDown("left")
+  local go_up   = love.keyboard.isDown("up")
+  local go_down = love.keyboard.isDown("down")
+
+  if go_right and not go_left then
     x_direction = right
-  elseif love.keyboard.isDown("left") and not love.keyboard.isDown("right") then
+  elseif go_left and not go_right then
     x_direction = left
   else
     x_direction = stopped
   end
 
-  if love.keyboard.isDown("up") and not love.keyboard.isDown("down") then
+  if go_up and not go_down then
     y_direction = up
-  elseif love.keyboard.isDown("down") and not love.keyboard.isDown("up") then
+  elseif go_down and not go_up then
     y_direction = down
   else
     y_direction = stopped
@@ -35,6 +55,19 @@ function love.update(dt)
   
   x = x + (distance * x_direction * dt)
   y = y + (distance * y_direction * dt)
+  --[[
+  x = x + (distance * x_direction() * dt)
+  y = y + (distance * y_direction() * dt)
+  --]]
+
+  count = count + 1
+  total_dt = total_dt + dt
+
+  if count >= 60 then
+    print(total_dt / count)
+    count = 0
+    total_dt = 0
+  end
 end
 
 function love.draw()
