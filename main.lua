@@ -4,62 +4,30 @@ https://sheepolution.com/learn/book/5
 --]]
 
 function love.load()
-  x = 100
-  y = 50
-  distance = 200
-  up = (-1)
-  down = 1
-  right = 1
-  left = (-1)
-  stopped = 0
-  y_direction = stopped
-  x_direction = stopped
+  fruits = {
+    "apple",
+    "banana",
+    "pineapple",
+    "tomato",
+    "boiled cabbage",
+    "pickles",
+  }
 
+  ---[[ Debug timing
+  -- Could be a lot better
+  -- There's probably something built into love that could help
   count = 0
   total_dt = 0
+  --]]
 end
 
-local function x_direction ()
-  local go_right = love.keyboard.isDown("right")
-  local go_left  = love.keyboard.isDown("left")
-  return (go_left and left or stopped) + (go_right and right or stopped)
-end
-
-local function y_direction ()
-  local go_up   = love.keyboard.isDown("up")
-  local go_down = love.keyboard.isDown("down")
-  return (go_up and up or stopped) + (go_down and down or stopped)
+local function esc ()
+  if love.keyboard.isDown("escape") then
+    love.event.quit(0)
+  end
 end
 
 function love.update(dt)
-  local go_right = love.keyboard.isDown("right")
-  local go_left  = love.keyboard.isDown("left")
-  local go_up   = love.keyboard.isDown("up")
-  local go_down = love.keyboard.isDown("down")
-
-  if go_right and not go_left then
-    x_direction = right
-  elseif go_left and not go_right then
-    x_direction = left
-  else
-    x_direction = stopped
-  end
-
-  if go_up and not go_down then
-    y_direction = up
-  elseif go_down and not go_up then
-    y_direction = down
-  else
-    y_direction = stopped
-  end
-  
-  x = x + (distance * x_direction * dt)
-  y = y + (distance * y_direction * dt)
-  --[[
-  x = x + (distance * x_direction() * dt)
-  y = y + (distance * y_direction() * dt)
-  --]]
-
   count = count + 1
   total_dt = total_dt + dt
 
@@ -68,8 +36,28 @@ function love.update(dt)
     count = 0
     total_dt = 0
   end
+
+  esc()
 end
 
 function love.draw()
-  love.graphics.rectangle("line", x, y, 200, 150)
+  --[[
+  for i,v in ipairs(fruits) do
+    love.graphics.print(v, 100, 100
+  --]]
+  local font = love.graphics.getFont()
+  local text = love.graphics.newText(font, fruits[1])
+  love.graphics.draw(text, 100, 100)
+  local width, height = text:getDimensions()
+  local total_height = height
+  local max = math.max
+  local max_width = max(width, 0)
+  for i=2,#fruits do
+    text:set(fruits[i])
+    width, height = text:getDimensions()
+    love.graphics.draw(text, 100, 100 + total_height)
+    max_width = max(max_width, width)
+    total_height = total_height + height
+  end
+  love.graphics.rectangle("line", 100 - 5, 100 - 5, max_width + 10, total_height + 10)
 end
